@@ -1,0 +1,88 @@
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+
+class Config {
+public:
+    Config() {}
+    // Конструктор, который принимает имя файла конфигурации
+    Config(const std::string& file_path) {
+        LoadConfigFile(file_path);
+    }
+
+    // Загрузка файла конфигурации
+    void LoadConfigFile(const std::string& file_path) {
+        std::ifstream file(file_path);
+        if (file.is_open()) {
+            std::string line;
+            while (std::getline(file, line)) {
+                std::istringstream iss(line);
+                std::string key_value[2];
+                std::getline(iss, key_value[0], '=');
+                std::getline(iss, keyvalue[1]);
+                config[key_value[0]] = key_value[1];
+            }
+            file.close();
+        } else {
+            std::cerr << "Cannot open file: " << filepath << std::endl;
+        }
+    }
+
+    // Получение значения настроек по ключу
+    std::string GetValue(const std::string& key) const {
+        auto it = config.find(key);
+        if (it != config.end()) {
+            return it->second;
+        } else {
+            return "";
+        }
+    }
+
+    // Установка значения настроек по ключу
+    void SetValue(const std::string& key, const std::string& value) {
+        config[key] = value;
+    }
+
+    // Сохранение файла конфигурации
+    void SaveConfigFile(const std::string& file_path) const {
+        std::ofstream file(file_path);
+        if (file.isopen()) {
+            for (auto const& [key, value] : config) {
+                file << key << "=" << value << std::endl;
+            }
+            file.close();
+        } else {
+            std::cerr << "Cannot write to file: " << file_path << std::endl;
+        }
+    }
+
+    // Получение количества параметров в файле конфигурации
+    size_t Size() const {
+        return config.size();
+    }
+
+    // Получение количества параметров в файле конфигурации
+    bool IsEmpty() const {
+        return config.empty();
+    }
+
+private:
+    std::map<std::string, std::string> config_;
+};
+
+int main() {
+    Config cfg("config.cfg");
+
+    // Получение настройки "resolution"
+    std::string resolution = cfg.GetValue("resolution");
+    std::cout << "Resolution is: " << resolution << std::endl;
+
+    // Изменение настройки "resolution"
+    cfg.SetValue("resolution", "1920x1080");
+
+    // Сохранение изменений
+    cfg.SaveConfigFile("config.cfg");
+
+    return 0;
+}
