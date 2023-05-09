@@ -1,0 +1,35 @@
+#include <lua.hpp>
+
+int main(int argc, char* argv[])
+{
+    // Initialize the Lua state
+    lua_State* L = luaL_newstate();
+    luaL_openlibs(L);
+
+    // Load a script from file and execute it
+    luaL_dofile(L, "script.lua");
+
+    return 0;
+}
+
+// Define the test function in Lua.
+int TestFunction(lua_State* L)
+{
+    printf("Test function called with %d arguments.\n", lua_gettop(L));
+    return 0;
+}
+
+int main(int argc, char* argv[])
+{
+    // Initialize the Lua state
+    lua_State* L = luaL_newstate();
+    luaL_openlibs(L);
+
+    // Register the test function in Lua.
+    lua_register(L, "TestFunction", TestFunction);
+
+    // Execute a script that uses the test function.
+    luaL_dostring(L, "TestFunction('Hello world!');");
+
+    return 0;
+}
